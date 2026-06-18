@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Memorama Sedes 2026</title>
+
+    <style>
+        /* Ajustamos el fondo verde claro para simular el césped de una cancha de fútbol */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e8f5e9;
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* Creamos una cuadrícula de 3 columnas para acomodar de forma perfecta nuestras 6 tarjetas */
+        #tablero {
+            display: grid;
+            grid-template-columns: repeat(3, 150px);
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Estilo base para las tarjetas cuando están cerradas (color verde fuerte) */
+        .tarjeta {
+            width: 150px;
+            height: 100px;
+            background-color: #2e7d32;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Estilo especial para cuando una tarjeta sea seleccionada y se dé la vuelta (fondo blanco) */
+        .volteada {
+            background-color: white;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+
+        /* Estilo invisible para desaparecer del mapa las tarjetas que ya formaron pareja */
+        .oculta {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🧠 Memorama: Sedes del Mundial 2026 🧠</h1>
+    <p>¡Haz clic en las tarjetas para emparejar cada Ciudad Sede con su País correspondiente!</p>
+
+    <div id="tablero"></div>
+
+    <p><a href="/">← Volver a jugar la Trivia</a></p>
+
+    <script>
+        // Buscamos el elemento tablero en la pantalla para meter las tarjetas ahí adentro
+        let tablero = document.getElementById('tablero');
+
+        // Creamos una lista vacía para almacenar temporalmente las dos tarjetas que voltee el jugador
+        let seleccionadas = [];
+
+        // Vamos a pedirle a Python que nos mande las tarjetas del memorama previamente mezcladas
+        fetch('/obtener_tarjetas')
+            // Convertimos los datos recibidos en un formato que la web entienda directo
+            .then(res => res.json())
+            // Cuando las tarjetas ya llegaron de Python, empezamos a construirlas
+            .then(tarjetas => {
+                // Recorremos las tarjetas una por una para fabricarlas físicamente en la pantalla
+                tarjetas.forEach((datos, indice) => {
+                    // Creamos un bloque cuadrado de código en blanco en la memoria
+                    let tarjeta = document.createElement('div');
+
+                    // Le asignamos el estilo visual básico de la tarjeta verde
+                    tarjeta.classList.add('tarjeta');
+
+                    // Al inicio todas las tarjetas muestran un signo de interrogación ocultando el secreto
+                    tarjeta.innerText = "❓";
+
+                    // Guardamos secretamente el nombre real dentro de la tarjeta (Ej: "Vancouver")
+                    tarjeta.dataset.texto = datos.texto;
+
+                    // Guardamos secretamente su ID numérico para saber con quién hace pareja
+                    tarjeta.dataset.id = datos.id;
+
+                    // Guardamos la posición original que tiene en la lista
+                    tarjeta.dataset.indice = indice;
+
+                    // Le programamos que al recibir un clic del jugador ejecute la orden de voltearse
+                    tarjeta.onclick = () => voltearTarjeta(tarjeta);
+
+                    // Colocamos la tarjeta recién construida adentro de nuestro tablero visual
+                    tablero.appendChild(tarjeta);
+                });
+            });
+
+        // Esta función se encarga de dar la vuelta a la tarjeta seleccionada
+        function voltearTarjeta(tarjeta) {
+            // Seguridad: Si ya hay 2 tarjetas volteadas en revisión, o si diste clic en una ya abierta, ignora el clic
+            if (seleccionadas.length >= 2 || tarjeta.classList.contains('volteada')) return;
+
+            // Cambiamos el signo de interrogación por su verdadero nombre oculto (Ciudad o País)
+            tarjeta.innerText = tarjeta.dataset.texto;
+
+            // Le añadimos el diseño de fondo blanco para que se note el cambio de estado
+            tarjeta.classList.add('volteada');
+
+            // Metemos esta tarjeta seleccionada a nuestra lista de revisión de turnos
+            seleccionadas.push(tarjeta);
+
+            // Si el jugador ya le dio la vuelta a dos tarjetas, llegó el momento de comprobar si acertó
+            if (seleccionadas.length === 2) {
+                // Dejamos pasar 1 segundo (1000 milisegundos) para que el ojo humano pueda ver las dos tarjetas y luego comparamos
+                setTimeout(verificarPareja, 1000);
+            }
+        }
+
+        // Esta función evalúa si las dos tarjetas seleccionadas hacen un "match" correcto
+        function verificarPareja() {
+            // Extraemos las dos tarjetas de la lista y las nombramos t1 (tarjeta 1) y t2 (tarjeta 2)
+            let [t1, t2] = seleccionadas;
+
+            // Comparamos: ¿El ID secreto de la tarjeta 1 es igual al ID secreto de la tarjeta 2?
+            if (t1.dataset.id === t2.dataset.id) {
+                // Si los ID coinciden (por ejemplo ambos son ID 1), les aplicamos el estilo invisible para quitarlas del tablero
+                t1.classList.add('oculta');
+                t2.classList.add('oculta');
+            } else {
+                // Si eran diferentes, les volvemos a poner el signo de interrogación encima
+                t1.innerText = "❓";
+                t2.innerText = "❓";
+
+                // Les quitamos el fondo blanco para que regresen a ser tarjetas verdes cerradas
+                t1.classList.remove('volteada');
+                t2.classList.remove('volteada');
+            }
+
+            // Vaciamos la lista por completo dejándola lista para el siguiente intento del jugador
+            seleccionadas = [];
+        }
+    </script>
+</body>
+
+</html>
