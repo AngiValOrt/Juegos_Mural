@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Pop - ¡Feria Tecnológica!</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Contenedor para el marcador y el tiempo */
+        .interfaz {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            font-size: 22px;
+            font-weight: bold;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        #tiempo {
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055;
+        }
+
+        #puntos {
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc;
+        }
+
+        canvas {
+            display: block;
+            background-color: #070a13;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="interfaz">
+        <div id="puntos">SCORE: <span id="texto-puntos">0</span></div>
+        <div id="tiempo">TIEMPO: <span id="texto-tiempo">30</span>s</div>
+    </div>
+
+    <canvas id="lienzoJuego"></canvas>
+
+    <script>
+        const canvas = document.getElementById("lienzoJuego");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let puntos = 0;
+        let tiempoRestante = 30; // El juego dura 30 segundos
+        let listaGlobos = [];
+        let juegoActivo = true;
+        const coloresNeon = ["#ff0055", "#00ffcc", "#9900ff", "#ffcc00", "#00ff66"];
+
+        class Globo {
+            constructor() {
+                this.radio = Math.random() * 10 + 25;
+                this.x = Math.random() * (canvas.width - this.radio * 2) + this.radio;
+                this.y = canvas.height + this.radio;
+                this.velocidad = Math.random() * 2.5 + 2; // Un poco más rápidos para el reto
+                this.color = coloresNeon[Math.floor(Math.random() * coloresNeon.length)];
+            }
+
+            dibujar() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.radio);
+                ctx.lineTo(this.x, this.y + this.radio + 15);
+                ctx.strokeStyle = "#ffffff";
+                ctx.shadowBlur = 0;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            actualizar() {
+                this.y -= this.velocidad;
+            }
+        }
+
+        function spawnGlobo() {
+            if (!juegoActivo) return;
+            listaGlobos.push(new Globo());
+            setTimeout(spawnGlobo, 600); // Salen globos más seguido
+        }
+
+        // Cuenta regresiva del reloj
+        const cronometro = setInterval(() => {
+            if (tiempoRestante > 0) {
+                tiempoRestante--;
+                document.getElementById("texto-tiempo").innerText = tiempoRestante;
+            } else {
+                juegoActivo = false;
+                clearInterval(cronometro);
+            }
+        }, 1000);
+
+        function animarJuego() {
+            ctx.fillStyle = "#070a13";
+            ctx.shadowBlur = 0;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = listaGlobos.length - 1; i >= 0; i--) {
+                listaGlobos[i].actualizar();
+                listaGlobos[i].dibujar();
+
+                if (listaGlobos[i].y + listaGlobos[i].radio < 0) {
+                    listaGlobos.splice(i, 1);
+                }
+            }
+
+            // Si el tiempo llega a 0, mostramos la pantalla de Game Over
+            if (!juegoActivo) {
+                ctx.fillStyle = "rgba(7, 10, 19, 0.8)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#ff0055";
+                ctx.font = "bold 30px Courier New";
+                ctx.textAlign = "center";
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = "#ff0055";
+                ctx.fillText("¡TIEMPO TERMINADO!", canvas.width / 2, canvas.height / 2 - 20);
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "20px Courier New";
+                ctx.shadowBlur = 0;
+                ctx.fillText("Puntaje Final: " + puntos, canvas.width / 2, canvas.height / 2 + 30);
+                ctx.font = "14px Courier New";
+                ctx.fillText("Escanea de nuevo para revancha", canvas.width / 2, canvas.height / 2 + 70);
+                return;
+            }
+
+            requestAnimationFrame(animarJuego);
+        }
+
+        // CONTROL MEJORADO: Ahora es mucho más sensible al hacer clic o tocar
+        function verificarImpacto(clickX, clickY) {
+            if (!juegoActivo) return;
+
+            for (let i = listaGlobos.length - 1; i >= 0; i--) {
+                let globo = listaGlobos[i];
+                let distancia = Math.hypot(clickX - globo.x, clickY - globo.y);
+
+                // Aumentamos el margen de impacto (+15 píxeles) para que sea facilísimo reventarlos al tocar cerca
+                if (distancia < globo.radio + 15) {
+                    puntos++;
+                    document.getElementById("texto-puntos").innerText = puntos;
+                    listaGlobos.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        canvas.addEventListener("touchstart", function (e) {
+            verificarImpacto(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        canvas.addEventListener("mousedown", function (e) {
+            verificarImpacto(e.clientX, e.clientY);
+        });
+
+        spawnGlobo();
+        animarJuego();
+    </script>
+</body>
+
+</html>
