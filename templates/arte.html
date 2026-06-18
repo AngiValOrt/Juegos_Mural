@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Arte Interactivo - Código Creativo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        /* Quitamos márgenes para que el lienzo de arte ocupe toda la pantalla del teléfono */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            /* Evita que la pantalla se mueva de arriba a abajo */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Pequeño letrero flotante de instrucciones en la parte superior */
+        .instrucciones {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            pointer-events: none;
+            /* Hace que el letrero sea invisible al tacto y no estorbe */
+            text-shadow: 0 0 5px #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="instrucciones">
+        ✨ <b>¡Arte con Código!</b> Desliza tu dedo o mouse por la pantalla para pintar ✨
+    </div>
+
+    <script>
+        // Configuración inicial del juego (Se ejecuta una sola vez al cargar la página)
+        function setup() {
+            createCanvas(windowWidth, windowHeight); // Creamos un lienzo del tamaño exacto del celular/pantalla
+            background(0); // Pintamos el fondo de color negro absoluto (0)
+        }
+
+        // Esta función especial de p5.js se ejecuta automáticamente cuando el usuario arrastra el dedo o mouse
+        function touchMoved() {
+            // Generamos colores aleatorios matemáticos (Rojo, Verde, Azul) para que cada trazo sea único e inesperado
+            let r = random(100, 255);
+            let g = random(100, 255);
+            let b = random(255);
+
+            // Configuramos las propiedades del pincel de código
+            fill(r, g, b, 150); // Rellenamos la figura con el color aleatorio y un toque de transparencia (150)
+            stroke(255, 255, 255); // Le ponemos un borde blanco delgado a la figura
+
+            // Creamos un tamaño aleatorio para la figura (entre 10 y 50 píxeles de diámetro)
+            let tamano = random(10, 50);
+
+            // DIBUJAMOS LA FIGURA INTERACTIVA:
+            // Dibujamos un círculo (ellipse) exactamente en la posición X e Y donde se encuentra el dedo/mouse
+            ellipse(mouseX, mouseY, tamano, tamano);
+
+            // Retornamos falso para prevenir que los navegadores móviles hagan comportamientos raros al arrastrar
+            return false;
+        }
+
+        // Función opcional: Si el usuario cambia la orientación del celular, el lienzo se ajusta solo
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+            background(0); // Reinicia el lienzo en negro limpio
+        }
+    </script>
+</body>
+
+</html>
