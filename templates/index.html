@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+    <meta charset="UTF-8">
+    <title>Portal de Juegos Interactivos - Exposición Tecnológica</title>
+    <style>
+        /* -------------------------------------------------------------
+           ESTILO DEL FONDO INTERACTIVO (EFECTO MATRIZ DE NEÓN)
+           ------------------------------------------------------------- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b0f19;
+            /* Fondo azul oscuro espacial */
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* Evita que salgan barras de navegación */
+            position: relative;
+        }
+
+        /* Creamos círculos de luz animados de fondo para dar profundidad tecnológica */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.15);
+            /* Luz azul suave */
+            filter: blur(80px);
+            /* Efecto difuminado tipo neón */
+            z-index: 1;
+            /* Se queda detrás de los botones */
+            animation: flotarLuces 8s infinite alternate ease-in-out;
+        }
+
+        /* La segunda luz se moverá de forma diferente */
+        body::after {
+            background: rgba(233, 69, 96, 0.12);
+            /* Luz magenta suave */
+            animation-duration: 12s;
+            animation-delay: -2s;
+        }
+
+        /* Animación matemática que hace que el fondo se mueva suavemente solo */
+        @keyframes flotarLuces {
+            0% {
+                transform: translate(-100px, -100px) scale(1);
+            }
+
+            100% {
+                transform: translate(100px, 100px) scale(1.2);
+            }
+        }
+
+        /* -------------------------------------------------------------
+           DISEÑO DE LOS CONTENEDORES Y TEXTOS
+           ------------------------------------------------------------- */
+        .panel-central {
+            position: relative;
+            z-index: 10;
+            /* Coloca el contenido por encima del fondo animado */
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+            /* Texto brillante */
+        }
+
+        .subtitulo {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* -------------------------------------------------------------
+           DISEÑO DE LOS BOTONES TECNOLÓGICOS (MODERNO)
+           ------------------------------------------------------------- */
+        .contenedor-botones {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* Acomoda los botones en una cuadrícula de 2x2 */
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Al usar celulares para el código QR, si la pantalla es chica se acomodan en 1 sola columna */
+        @media (max-width: 600px) {
+            .contenedor-botones {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-tecnologico {
+            background-color: rgba(30, 41, 59, 0.7);
+            /* Botón semi-transparente estilo cristal */
+            color: #f8fafc;
+            border: 2px solid #38bdf8;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            /* Efecto vidrio esmerilado elegante */
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Animación interactiva cuando el usuario pasa el mouse o pulsa la pantalla con su dedo */
+        .btn-tecnologico:hover {
+            transform: translateY(-5px);
+            /* El botón se eleva ligeramente */
+            background-color: #38bdf8;
+            color: #0b0f19;
+            box-shadow: 0 0 25px #38bdf8;
+            /* Crea un halo de luz neón alrededor */
+        }
+
+        /* Cambiamos el color del borde de los juegos de hardware/diseño para diferenciarlos */
+        .btn-hardware {
+            border-color: #e94560;
+        }
+
+        .btn-hardware:hover {
+            background-color: #e94560;
+            box-shadow: 0 0 25px #e94560;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="panel-central">
+        <h1>👾 Portal de Retos Tecnológicos 👾</h1>
+        <p class="subtitulo">Escanea el código QR o selecciona un desafío para comenzar a interactuar en pantalla
+            completa</p>
+
+        <div class="contenedor-botones">
+            <button class="btn-tecnologico" onclick="window.open('/trivia', '_blank')">🏆 Trivia Mundial 2026</button>
+            <button class="btn-tecnologico" onclick="window.open('/memorama', '_blank')">🧠 Memorama de Sedes</button>
+            <button class="btn-tecnologico btn-hardware" onclick="window.open('/cripta', '_blank')">🔐 Cripta Hacker
+                (Seguridad)</button>
+            <button class="btn-tecnologico btn-hardware" onclick="window.open('/arte', '_blank')">🎨 Pintura con Código
+                (Arte)</button>
+            <button class="btn-tecnologico" onclick="window.open('/globos', '_blank')"
+                style="border-color: #00ffcc; box-shadow: 0 0 10px #00ffcc;">🎈 Jugar Neon Pop (Globos)</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
