@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Laboratorio de Código y Formas</title>
+    <style>
+        /* Diseño responsivo y oscuro, ideal para pantallas de celulares que escaneen el QR */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .panel {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 15px;
+            display: inline-block;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ESTA ES LA FORMA QUE LOS ESTUDIANTES VAN A MODIFICAR */
+        #objeto-cambiante {
+            width: 120px;
+            height: 120px;
+            background-color: #38bdf8;
+            margin: 30px auto;
+            border-radius: 0px;
+            /* Inicia como un cuadrado perfecto */
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        /* Contenedor de las barras deslizantes */
+        .control {
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #94a3b8;
+        }
+
+        /* Diseño de los Sliders (Barras de rango) */
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="panel">
+        <h1>🛠️ Laboratorio de Formas 🛠️</h1>
+        <p>Mueve los controles para ver el poder del código en tiempo real</p>
+
+        <div id="objeto-cambiante"></div>
+
+        <div class="control">
+            <label>Transformar esquinas (Redondeado):</label>
+            <input type="range" id="esquinas" min="0" max="50" value="0">
+        </div>
+
+        <div class="control">
+            <label>Girar figura (Rotación):</label>
+            <input type="range" id="rotacion" min="0" max="360" value="0">
+        </div>
+
+        <div class="control">
+            <label>Tonalidad del color (Matiz):</label>
+            <input type="range" id="color" min="0" max="360" value="195">
+        </div>
+
+        <p style="font-size: 12px; color: #38bdf8;">¡Esto es lo que hace un Diseñador Frontend en programación!</p>
+    </div>
+
+    <script>
+        // Buscamos la figura geométrica en la pantalla
+        let figura = document.getElementById('objeto-cambiante');
+
+        // Capturamos las 3 barras deslizantes por su ID
+        let barraEsquinas = document.getElementById('esquinas');
+        let barraRotacion = document.getElementById('rotacion');
+        let barraColor = document.getElementById('color');
+
+        // Función que lee los valores de las barras y altera los estilos del objeto
+        function actualizarFigura() {
+            // 1. Modificamos el redondeado de las esquinas en porcentaje (%)
+            figura.style.borderRadius = barraEsquinas.value + "%";
+
+            // 2. Modificamos la rotación usando la propiedad transform en grados (deg)
+            figura.style.transform = "rotate(" + barraRotacion.value + "deg)";
+
+            // 3. Modificamos el color usando el sistema HSL (Tonalidad, Saturación, Brillo)
+            figura.style.backgroundColor = "hsl(" + barraColor.value + ", 80%, 60%)";
+        }
+
+        // Le ordenamos a la página que ejecute la función cada vez que el usuario mueva cualquiera de las barras
+        barraEsquinas.oninput = actualizarFigura;
+        barraRotacion.oninput = actualizarFigura;
+        barraColor.oninput = actualizarFigura;
+    </script>
+</body>
+
+</html>
