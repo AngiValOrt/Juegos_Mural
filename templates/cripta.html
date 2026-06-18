@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>La Cripta del Ciberespacio - Ciberseguridad</title>
+    <style>
+        /* Diseñamos un estilo de consola hacker: fondo negro y letras verde neón */
+        body {
+            background-color: #050505;
+            color: #00ff66;
+            font-family: 'Courier New', Courier, monospace;
+            /* Tipografía estilo código */
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* Contenedor principal estilo terminal de comandos */
+        .pantalla-hacker {
+            border: 2px solid #00ff66;
+            background-color: #0a0a0a;
+            padding: 30px;
+            border-radius: 10px;
+            display: inline-block;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
+        }
+
+        /* Cuadro de texto donde se muestra el mensaje oculto */
+        .codigo-encriptado {
+            font-size: 28px;
+            letter-spacing: 3px;
+            background-color: #111;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #ff3366;
+            /* Color rojo para simular una alerta de peligro */
+        }
+
+        /* Estilo para la barra deslizante (la llave descifradora) */
+        input[type="range"] {
+            width: 80%;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        /* Mensaje de éxito al resolver el acertijo */
+        .exito {
+            color: #38bdf8;
+            font-weight: bold;
+            font-size: 20px;
+            display: none;
+            /* Oculto al inicio, aparece al ganar */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="pantalla-hacker">
+        <h1>⚠️ ALERTA: Servidor Bloqueado ⚠️</h1>
+        <p>Un malware ha encriptado el sistema de la escuela. Mueve la barra de abajo (Llave Criptográfica) hasta que el
+            mensaje tenga sentido en español y escribe la solución.</p>
+
+        <div id="pantalla-codigo" class="codigo-encriptado">WDUVHWD</div>
+
+        <label>Mover Llave de Desplazamiento: <span id="valor-llave">0</span></label><br>
+        <input type="range" id="barra-llave" min="0" max="10" value="0">
+
+        <br><br>
+        <label>Escribe la palabra descifrada aquí:</label><br>
+        <input type="text" id="respuesta-alumno" placeholder="Tu respuesta..."
+            style="padding: 10px; font-size: 16px; text-align: center; margin-top: 10px; border-radius: 5px; border: 1px solid #00ff66; background: black; color: white;">
+
+        <br><br>
+        <button onclick="validarHackeo()"
+            style="background-color: #00ff66; color: black; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px;">🔓
+            Desbloquear Sistema</button>
+
+        <p id="mensaje-victoria" class="exito">¡SISTEMA ASEGURADO! 🎉 Has neutralizado la amenaza. ¡Tienes madera de
+            programador!</p>
+    </div>
+
+    <script>
+        // La palabra real oculta es "TARJETA" (haciendo alusión a hardware), encriptada originalmente moviendo 3 letras adelante (WDUVHWD)
+        const palabraOriginalEncriptada = "WDUVHWD";
+
+        // Capturamos los elementos de la pantalla para usarlos con código
+        let barra = document.getElementById('barra-llave');
+        let visorLlave = document.getElementById('valor-llave');
+        let visorCodigo = document.getElementById('pantalla-codigo');
+
+        // Función matemática que mueve las letras hacia atrás según el valor de la barra
+        function descifrarLetras(texto, desplazamiento) {
+            let resultado = "";
+            for (let i = 0; i < texto.length; i++) {
+                let codigoAscci = texto.charCodeAt(i); // Convertimos la letra a su número matemático interno
+                // Restamos el desplazamiento para regresar la letra original en el abecedario
+                let letraNueva = String.fromCharCode(codigoAscci - desplazamiento);
+                resultado += letraNueva;
+            }
+            return resultado;
+        }
+
+        // Cada vez que el estudiante mueva la barra deslizante
+        barra.oninput = function () {
+            let valor = parseInt(barra.value); // Obtenemos el número seleccionado (0 al 10)
+            visorLlave.innerText = valor; // Lo mostramos en el texto de la pantalla
+
+                // Calculamos cómo cambian las letras en tiempo real y actualizamos la pantalla
+            let textoCambiado = descifrarLetras(palabraOriginalEncriptada, valor);
+            visorCodigo.innerText = textoCambicion = textoCambiado;
+        }
+
+        // Función para verificar si el alumno adivinó y escribió correctamente la palabra
+        function validarHackeo() {
+            let entrada = document.getElementById('respuesta-alumno').value.toUpperCase().trim();
+            // Si la respuesta es "TARJETA", el alumno gana el desafío
+            if (entrada === "TARJETA" && barra.value == "3") {
+                document.getElementById('mensaje-victoria').style.display = "block"; // Mostramos el mensaje azul de éxito
+                visorCodigo.style.color = "#38bdf8"; // Cambiamos el color de la palabra a azul
+            } else {
+                alert("Código incorrecto o sistema aún encriptado. ¡Sigue probando la llave!");
+            }
+        }
+    </script>
+</body>
+
+</html>
