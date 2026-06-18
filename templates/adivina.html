@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Adivina el Componente Tech</title>
+    <style>
+        /* Centramos el contenido y ponemos un fondo moderno y tecnológico */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Tarjeta principal del juego */
+        .contenedor {
+            background-color: #16161d;
+            padding: 30px;
+            border-radius: 20px;
+            display: inline-block;
+            max-width: 450px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Estilo de la imagen. Al inicio estará muy borrosa */
+        .imagen-incognita {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            filter: blur(15px);
+            /* Este comando aplica el efecto borroso super divertido */
+            transition: filter 0.5s ease;
+            /* Hace que el cambio de borroso a claro se vea suave */
+        }
+
+        /* Clase especial para quitar lo borroso cuando el usuario adivine */
+        .revelada {
+            filter: blur(0px) !important;
+        }
+
+        /* Diseño de los botones de opciones */
+        button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 12px;
+            margin: 8px;
+            width: 80%;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff6b81;
+        }
+
+        #pista {
+            font-style: italic;
+            color: #4ecca3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contenedor">
+        <h1>🕵️‍♂️ ¿Qué componente es? 🕵️‍♂️</h1>
+        <p>La imagen está oculta. ¡Usa la pista y adivina para revelarla!</p>
+
+        <img id="foto" src="" class="imagen-incognita" alt="Componente Secreto">
+
+        <p id="pista"></p>
+
+        <div id="zona-botones"></div>
+
+        <h3 id="mensaje"></h3>
+    </div>
+
+    <script>
+        let retos = []; // Caja para guardar los retos que mande Python
+        let indice = 0; // Conteo de en qué pregunta vamos
+
+        // Le pedimos los datos de las adivinanzas a nuestro servidor Python
+        fetch('/obtener_adivinanzas')
+            .then(res => res.json())
+            .then(datos => {
+                retos = datos; // Guardamos los retos recibidos
+                cargarReto(); // Arrancamos el primer reto
+            });
+
+        // Función para colocar la imagen borrosa, la pista y los botones
+        function cargarReto() {
+            // Si terminamos todos los retos del QR
+            if (indice >= retos.length) {
+                document.querySelector('.contenedor').innerHTML = "<h2>¡Excelente! Eres un experto en tecnología 💻. ¡Inscríbete a Programación!</h2>";
+                return;
+            }
+
+            let retoActual = retos[indice];
+
+            // Asignamos la imagen y la pista a los elementos de la pantalla
+            let foto = document.getElementById('foto');
+            foto.src = retoActual.imagen;
+            foto.classList.remove('revelada'); // Nos aseguramos de que vuelva a estar borrosa
+
+            document.getElementById('pista').innerText = "Pista: " + retoActual.pista;
+            document.getElementById('mensaje').innerText = ""; // Limpiamos mensajes previos
+
+            let zonaBotones = document.getElementById('zona-botones');
+            zonaBotones.innerHTML = ""; // Vaciamos los botones anteriores
+
+            // Creamos dinámicamente un botón por cada opción
+            retoActual.opciones.forEach(opcion => {
+                let boton = document.createElement('button');
+                boton.innerText = opcion;
+                // Al hacer clic, revisamos si adivinó
+                boton.onclick = () => comprobarAdivinanza(opcion, retoActual.correcta);
+                zonaBotones.appendChild(boton);
+            });
+        }
+
+        // Función para validar la respuesta del estudiante
+        function comprobarAdivinanza(elegida, correcta) {
+            let mensaje = document.getElementById('mensaje');
+            let foto = document.getElementById('foto');
+
+            if (elegida === correcta) {
+                mensaje.innerText = "¡Correcto! 🎉 ¡Imagen Revelada!";
+                mensaje.style.color = "#4ecca3";
+                foto.classList.add('revelada'); // ¡Le quitamos el efecto borroso a la foto!
+
+                // Esperamos 2.5 segundos para que admiren la imagen y pasamos al siguiente componente
+                setTimeout(() => {
+                    indice++;
+                    cargarReto();
+                }, 2500);
+            } else {
+                mensaje.innerText = "Sigue intentando... ❌ ¡Tú puedes!";
+                mensaje.style.color = "#e94560";
+            }
+        }
+    </script>
+</body>
+
+</html>
