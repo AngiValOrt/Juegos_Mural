@@ -2,165 +2,313 @@
 <html lang="es">
 
 <head>
+    <!-- Configura el sistema de caracteres global para admitir textos en español -->
     <meta charset="UTF-8">
+    <!-- Habilita el autoescalado responsivo para un despliegue estético en pantallas móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- El título de la pestaña del navegador del alumno o visitante -->
     <title>Trivia Mundial 2026</title>
-
     <style>
-        /* Configuramos el fondo de la pantalla y centramos todo el texto */
+        /* Estilos estructurales y de color para el cuerpo de la aplicación de trivia */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #0d1117;
+            /* Fondo oscuro cibernético de alta fidelidad */
+            color: #ffffff;
+            /* Letras generales en color blanco nítido */
+            font-family: 'Courier New', Courier, monospace;
+            /* Tipografía estilo programador profesional */
+            margin: 0;
+            /* Remueve márgenes externos de la página */
+            padding: 20px;
+            /* Margen interno de amortiguación */
             text-align: center;
-            padding: 50px;
+            /* Alineación central de los bloques informativos */
         }
 
-        /* Diseñamos el cuadro blanco donde flotará el juego */
-        .tarjeta {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            max-width: 500px;
-            width: 100%;
+        /* Contenedor central del cuestionario que simula un bloque de código flotante */
+        .contenedor-trivia {
+            background-color: #070a13;
+            /* Fondo azul marino profundo para contrastar */
+            border: 2px solid #9900ff;
+            /* Línea de borde de color morado neón brillante */
+            box-shadow: 0 0 15px #9900ff;
+            /* Efecto de luz fluorescente morada */
+            max-width: 600px;
+            /* Ancho máximo restrictivo para no deformarse en computadoras */
+            margin: 30px auto;
+            /* Centrado perfecto horizontal en la pantalla */
+            padding: 25px;
+            /* Espacio de protección interno para los textos */
+            border-radius: 12px;
+            /* Esquinas sutilmente curvas */
         }
 
-        /* Le damos un estilo grande y llamativo a los botones de respuestas */
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            margin: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 80%;
-        }
-
-        /* Hace que el botón cambie de azul a un tono más oscuro cuando pasas el mouse por encima */
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Estilo para el texto que dice "¡Correcto!" o "Incorrecto" */
-        #resultado {
+        /* Barra de progreso numérica que indica en qué pregunta va el usuario */
+        .barra-progreso {
+            color: #ffcc00;
+            /* Color amarillo neón llamativo */
+            font-size: 14px;
+            /* Tamaño de letra compacto */
             font-weight: bold;
-            margin-top: 20px;
-            font-size: 18px;
+            /* Texto en negrita */
+            text-transform: uppercase;
+            /* Convierte los caracteres a mayúsculas automáticamente */
+            margin-bottom: 15px;
+            /* Separación con el bloque de la pregunta */
+        }
+
+        /* Caja contenedora para la visualización del texto de la pregunta actual */
+        .caja-pregunta {
+            font-size: 20px;
+            /* Letras de tamaño mediano e importante */
+            font-weight: bold;
+            /* Pone el enunciado en formato grueso */
+            color: #00ffcc;
+            /* Color turquesa neón de alta legibilidad */
+            text-shadow: 0 0 5px #00ffcc;
+            /* Brillo ligero sobre las letras */
+            margin-bottom: 25px;
+            /* Separación marcada con las opciones de respuesta */
+            min-height: 60px;
+            /* Asegura un espacio mínimo reservado para preguntas largas */
+        }
+
+        /* Estilo base para los 4 botones de respuestas de opción múltiple */
+        .btn-opcion {
+            display: block;
+            /* Obliga a cada botón a colocarse debajo del anterior */
+            width: 100%;
+            /* Estira el botón horizontalmente a todo el ancho disponible */
+            padding: 14px;
+            /* Grosor interno del botón ideal para interacciones táctiles */
+            margin: 12px 0;
+            /* Separación de interlineado vertical entre respuestas */
+            font-size: 16px;
+            /* Letras claras y legibles */
+            font-family: inherit;
+            /* Hereda la tipografía de código de computadora del padre */
+            color: #ffffff;
+            /* Texto de color blanco */
+            background-color: #1f2937;
+            /* Fondo gris oscuro de contraste */
+            border: 2px solid #1f2937;
+            /* Borde inicial idéntico al fondo */
+            border-radius: 8px;
+            /* Esquinas suavizadas */
+            cursor: pointer;
+            /* Modifica el cursor del ratón a puntero de mano */
+            transition: all 0.2s;
+            /* Tiempo de animación veloz para efectos visuales */
+            text-align: left;
+            /* Alinea los textos de las respuestas a la izquierda para mejor lectura */
+        }
+
+        /* Efecto visual decorativo cuando el usuario pasa el cursor sobre una respuesta */
+        .btn-opcion:hover {
+            border-color: #00ffcc;
+            /* Cambia el color del borde a turquesa brillante */
+            box-shadow: 0 0 8px #00ffcc;
+            /* Genera un brillo de enfoque turquesa */
+            background-color: #111827;
+            /* Oscurece levemente el fondo del botón */
+        }
+
+        /* Estilos especializados de diseño para la cartelera de resultados finales del juego */
+        .pantalla-resultados {
+            display: none;
+            /* Se inicializa oculta; se activa al responder la pregunta 10 */
+            padding: 20px;
+            /* Margen interno de aislamiento */
+        }
+
+        /* Estilo base de alta fidelidad para la botonera de navegación de reinicio o salida */
+        .btn-navegacion {
+            display: inline-block;
+            /* Permite colocar los botones de forma lateral si hay espacio */
+            width: 45%;
+            /* Cada botón ocupa casi la mitad del espacio disponible */
+            min-width: 150px;
+            /* Ancho mínimo de seguridad para pantallas micro-celulares */
+            padding: 14px;
+            /* Altura de amortiguamiento interno */
+            margin: 15px 10px;
+            /* Separación de márgenes alrededor de cada botón */
+            font-size: 16px;
+            /* Letras legibles */
+            font-weight: bold;
+            /* Texto grueso */
+            background: transparent;
+            /* Fondo transparente estilo cyber */
+            border-radius: 8px;
+            /* Esquinas suavizadas */
+            cursor: pointer;
+            /* Cursor de mano activo */
+            transition: 0.3s;
+            /* Transición suave de color al clickear */
+        }
+
+        /* Botón turquesa para resetear variables y volver a iniciar la trivia */
+        .btn-reiniciar {
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            box-shadow: 0 0 8px #00ffcc;
+        }
+
+        /* Botón morado para redirigir la navegación al inicio del index Flask */
+        .btn-salir {
+            border: 2px solid #9900ff;
+            color: #9900ff;
+            box-shadow: 0 0 8px #9900ff;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="tarjeta">
-        <h1>🏆 Trivia Mundial 2026 🏆</h1>
+    <!-- Bloque contenedor principal de la trivia interactiva -->
+    <div class="contenedor-trivia">
 
-        <div id="contenedor-trivia">
-            <h3 id="texto-pregunta">Cargando pregunta...</h3>
-
-            <div id="opciones-botones"></div>
-
-            <p id="resultado"></p>
+        <!-- PANTALLA ACTIVA DE CUESTIONARIO: Contiene la lógica activa de preguntas -->
+        <div id="pantalla-juego">
+            <!-- Texto dinámico que indica el número actual de reactivo -->
+            <div class="barra-progreso" id="indicador-progreso">Pregunta 1 / 10</div>
+            <!-- Div donde JavaScript inyectará dinámicamente el enunciado de la pregunta -->
+            <div class="caja-pregunta" id="texto-pregunta">Cargando base de datos de preguntas...</div>
+            <!-- Contenedor vertical donde JavaScript inyectará las 4 opciones de opción múltiple -->
+            <div id="contenedor-opciones"></div>
         </div>
+
+        <!-- PANTALLA DE RESULTADOS: Se activa correctamente al responder la pregunta 10 -->
+        <div class="pantalla-resultados" id="pantalla-final">
+            <h2 style="color: #ff0055; text-shadow: 0 0 10px #ff0055; margin-top: 0;">¡TRIVIA TERMINADA!</h2>
+            <p>Has respondido todos los reactivos sobre la Copa Mundial de la FIFA 2026.</p>
+            <!-- Cuadro destacado para mostrar el puntaje real obtenido -->
+            <p style="font-size: 22px; margin: 25px 0;">Tu Calificación: <span id="marcador-final"
+                    style="color: #ffcc00; font-weight: bold; font-size: 30px;">0</span> / 10</p>
+            <!-- Botón para regresar al índice 1 de las preguntas y volver a jugar -->
+            <button class="btn-navegacion btn-reiniciar" onclick="reiniciarTrivia()">🔄 Reintentar</button>
+            <!-- Botón para salir y regresar al home principal de la aplicación web -->
+            <button class="btn-navegacion btn-salir" onclick="window.location.href='/'">🏠 Menú</button>
+        </div>
+
     </div>
 
+    <!-- EL SCRIPT TOTALMENTE INTEGRADO -->
     <script>
-        // Creamos una caja vacía para guardar las preguntas que nos mande Python
-        let preguntas = [];
-
-        // El número de la pregunta en la que va jugando el usuario (empezamos en la cero)
-        let indiceActual = 0;
-
-        // Guardamos cuántas respuestas correctas va logrando el jugador
-        let puntaje = 0;
-
-        // fetch va a tocar la puerta de la ruta secreta de Python para pedir las preguntas
-        fetch('/obtener_preguntas')
-            // Cuando Python responde, transformamos esa respuesta en datos fáciles de leer
-            .then(respuesta => respuesta.json())
-            // Con los datos listos, los metemos a nuestro juego
-            .then(datos => {
-                // Guardamos la lista completa de preguntas que envió Python
-                preguntas = datos;
-                // Llamamos a la función mágica para pintar la primera pregunta en la pantalla
-                mostrarPregunta();
-            });
-
-        // Esta función dibuja la pregunta actual y sus opciones en la página web
-        function mostrarPregunta() {
-            // Revisamos si el jugador ya contestó todas las preguntas disponibles
-            if (indiceActual >= preguntas.length) {
-                // Si terminó el juego, borramos todo lo de la tarjeta y escribimos su felicitación final
-                document.getElementById('contenedor-trivia').innerHTML = `
-                    <h2>¡Terminaste! 🎉</h2>
-                    <p>Tu puntaje final es: <strong>${puntaje} de ${preguntas.length}</strong></p>
-                    <p><a href="/memorama">¡Haz clic aquí para ir al juego de Memorama! 🧠</a></p>
-                `;
-                // Ponemos un candado (return) para que la función se detenga aquí y no busque más
-                return;
+        // Banco de datos con 10 preguntas de cultura general sobre el Mundial 2026
+        const bancoPreguntas = [
+            {
+                pregunta: "¿Cuántos países organizan en conjunto la Copa Mundial de la FIFA 2026?",
+                opciones: ["Solo 1 (México)", "2 países (México y EE. UU.)", "3 países (Canadá, EE. UU. y México)", "4 países de América"],
+                correcta: 2
+            },
+            {
+                pregunta: "¿Por qué el Mundial 2026 es histórico para el formato del torneo?",
+                opciones: ["Se jugará con balones cuadrados", "Se expande por primera vez a 48 selecciones participantes", "Dura solamente dos semanas", "Solo se permiten cambios ilimitados"],
+                correcta: 1
+            },
+            {
+                pregunta: "Inauguración: ¿En cuál legendario estadio mexicano se jugará el partido inaugural del Mundial 2026?",
+                options: ["Estadio BBVA (Monterrey)", "Estadio Akron (Guadalajara)", "Estadio Olímpico Universitario", "Estadio Azteca (CDMX)"],
+                pregunta: "¿En cuál legendario estadio mexicano se jugará el partido inaugural del Mundial 2026?",
+                opciones: ["Estadio BBVA (Monterrey)", "Estadio Akron (Guadalajara)", "Estadio Olímpico Universitario", "Estadio Azteca (CDMX)"],
+                correcta: 3
+            },
+            {
+                pregunta: "¿Qué récord histórico romperá el Estadio Azteca en este Mundial 2026?",
+                opciones: ["Ser el estadio con el estacionamiento más grande", "Ser el único estadio en albergar tres Copas del Mundo distintas", "Tener la pantalla más grande del continente", "Vender más comida tradicional"],
+                correcta: 1
+            },
+            {
+                pregunta: "¿Cuál de las siguientes ciudades mexicanas NO será sede de partidos del Mundial?",
+                opciones: ["Ciudad de México", "Guadalajara", "Puebla", "Monterrey"],
+                correcta: 2
+            },
+            {
+                pregunta: "¿Cuántas selecciones de fútbol competían en los mundiales anteriores (como Qatar 2022) antes del cambio actual?",
+                opciones: ["16 selecciones", "24 selecciones", "32 selecciones", "40 selecciones"],
+                correcta: 2
+            },
+            {
+                pregunta: "¿Cuál es el idioma oficial que predomina en el país sede que albergará la mayor cantidad de partidos del torneo?",
+                opciones: ["Inglés (Estados Unidos)", "Español (México)", "Francés (Canadá)", "Portugués"],
+                correcta: 0
+            },
+            {
+                pregunta: "¿En qué país norteamericano se llevará a cabo la Gran Final para definir al Campeón del Mundo 2026?",
+                opciones: ["México", "Canadá", "Estados Unidos", "Brasil"],
+                correcta: 2
+            },
+            {
+                pregunta: "¿Cuál es el nombre del trofeo oficial que se le entrega a la selección ganadora?",
+                opciones: ["Copa Jules Rimet", "Copa del Mundo de la FIFA", "Oveja de Plata Continental", "Galardón de los Campeones"],
+                correcta: 1
+            },
+            {
+                pregunta: "En la cultura general del fútbol, ¿cada cuántos años se organiza tradicionalmente una Copa del Mundo masculina?",
+                opciones: ["Cada año", "Cada 2 años", "Cada 4 años", "Cada 6 años"],
+                correcta: 2
             }
+        ];
 
-            // Seleccionamos la pregunta exacta que corresponde jugar usando el número del índice actual
-            let preguntaActual = preguntas[indiceActual];
+        let indicePreguntaActual = 0;
+        let puntajeAcumulado = 0;
 
-            // Reemplazamos el texto "Cargando..." por la pregunta real del Mundial
-            document.getElementById('texto-pregunta').innerText = preguntaActual.pregunta;
+        // Función encargada de renderizar el reactivo actual en el navegador
+        function cargarPregunta() {
+            const datosPregunta = bancoPreguntas[indicePreguntaActual];
 
-            // Limpiamos la pantalla borrando el letrero de correcto/incorrecto del turno pasado
-            document.getElementById('resultado').innerText = "";
+            document.getElementById("indicador-progreso").innerText = `Pregunta ${indicePreguntaActual + 1} / ${bancoPreguntas.length}`;
+            document.getElementById("texto-pregunta").innerText = datosPregunta.pregunta;
 
-            // Buscamos la zona de la pantalla donde deben aparecer los botones de opciones
-            let contenedorBotones = document.getElementById('opciones-botones');
+            const contenedorOpciones = document.getElementById("contenedor-opciones");
+            contenedorOpciones.innerHTML = "";
 
-            // Vaciamos esa zona para borrar los botones viejos de la pregunta anterior
-            contenedorBotones.innerHTML = "";
+            datosPregunta.opciones.forEach((opcion, posicion) => {
+                const boton = document.createElement("button");
+                boton.classList.add("btn-opcion");
+                boton.innerText = `${posicion + 1}. ${opcion}`;
 
-            // Hacemos un recorrido rápido por cada una de las opciones que tiene esta pregunta
-            preguntaActual.opciones.forEach(opcion => {
-                // Creamos un elemento botón nuevecito en la memoria de la página
-                let boton = document.createElement('button');
-
-                // Le escribimos el texto de la opción al botón (Ej: "3 países")
-                boton.innerText = opcion;
-
-                // Le ordenamos al botón que si el usuario le da un clic, revise si esa es la opción correcta
-                boton.onclick = () => verificarRespuesta(opcion, preguntaActual.correcta);
-
-                // Pegamos físicamente el botón dentro del contenedor en la pantalla para que se pueda ver
-                contenedorBotones.appendChild(boton);
+                boton.onclick = () => evaluarRespuesta(posicion);
+                contenedorOpciones.appendChild(boton);
             });
         }
 
-        // Esta función verifica si la opción que eligió el jugador es la acertada
-        function verificarRespuesta(elegida, correcta) {
-            // Buscamos la zona de texto donde pondremos el resultado del clic
-            let textoResultado = document.getElementById('resultado');
+        // Evalúa de forma lógica la selección del participante
+        function evaluarRespuesta(opcionSeleccionada) {
+            const respuestaCorrecta = bancoPreguntas[indicePreguntaActual].correcta;
 
-            // Preguntamos: ¿La opción que presionó el usuario es igualita a la respuesta correcta?
-            if (elegida === correcta) {
-                // Escribimos un letrero feliz de éxito
-                textoResultado.innerText = "¡Correcto! 🌟";
-                // Pintamos las letras de color verde alegre
-                textoResultado.style.color = "green";
-                // Le regalamos un punto más al marcador del jugador
-                puntaje++;
+            if (opcionSeleccionada === respuestaCorrecta) {
+                puntajeAcumulado++;
+            }
+
+            indicePreguntaActual++;
+
+            if (indicePreguntaActual < bancoPreguntas.length) {
+                cargarPregunta();
             } else {
-                // Si se equivocó, le avisamos y además le mostramos cuál era la buena
-                textoResultado.innerText = `Incorrecto ❌ La respuesta era: ${correcta}`;
-                // Pintamos las letras de color rojo para alertarlo
-                textoResultado.style.color = "red";
+                mostrarResultadosFinales();
             }
-
-            // Usamos una pausa de tiempo para que el usuario alcance a leer el resultado
-            setTimeout(() => {
-                // Le sumamos uno al contador para avanzar a la siguiente pregunta de la lista
-                indiceActual++;
-                // Volvemos a llamar a la función para actualizar la pantalla con el nuevo reto
-                mostrarPregunta();
-            }, 2000); // 2000 milisegundos significan que se esperará exactamente 2 segundos
         }
+
+        // Muestra la tarjeta de evaluación final
+        function mostrarResultadosFinales() {
+            document.getElementById("pantalla-juego").style.display = "none";
+            document.getElementById("marcador-final").innerText = puntajeAcumulado;
+            document.getElementById("pantalla-final").style.display = "block";
+        }
+
+        // Restaura los contadores para reiniciar el juego
+        function reiniciarTrivia() {
+            indicePreguntaActual = 0;
+            puntajeAcumulado = 0;
+            document.getElementById("pantalla-final").style.display = "none";
+            document.getElementById("pantalla-juego").style.display = "block";
+            cargarPregunta();
+        }
+
+        // Ejecución inmediata al cargar la estructura HTML
+        window.onload = cargarPregunta;
     </script>
 </body>
 
