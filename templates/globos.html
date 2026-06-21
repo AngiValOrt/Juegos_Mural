@@ -6,50 +6,189 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neon Pop - ¡Feria Tecnológica!</title>
     <style>
+        /* Estilos generales para el fondo del cuerpo de la página */
         body {
             background-color: #0d1117;
+            /* Color de fondo gris oscuro casi negro */
             color: #ffffff;
+            /* Color de texto blanco por defecto */
             font-family: 'Courier New', Courier, monospace;
+            /* Tipografía estilo código de computadora */
             text-align: center;
+            /* Alinea todos los textos al centro */
             margin: 0;
+            /* Elimina márgenes externos de la pantalla */
             padding: 0;
+            /* Elimina espacios internos de la pantalla */
             overflow: hidden;
+            /* Evita que aparezcan barras de navegación o se mueva la pantalla */
             touch-action: none;
+            /* Desactiva gestos automáticos del celular como el zoom */
         }
 
-        /* Contenedor para el marcador y el tiempo */
+        /* Contenedor principal de la interfaz de puntos y tiempo */
         .interfaz {
             position: absolute;
+            /* Coloca la barra flotando por encima del juego */
             top: 15px;
+            /* La separa 15 píxeles del borde superior */
             width: 100%;
+            /* Ocupa todo el ancho de la pantalla */
             display: flex;
+            /* Activa el modo de caja flexible para alinear elementos */
             justify-content: space-around;
+            /* Distribuye el tiempo y los puntos con espacio entre ellos */
             font-size: 22px;
+            /* Tamaño de letra grande y visible */
             font-weight: bold;
+            /* Pone las letras en negrita */
             z-index: 10;
+            /* Se asegura de estar por encima de los globos */
             pointer-events: none;
+            /* Hace que los clics pasen de largo y no bloqueen el juego */
+            display: none;
+            /* Oculta la interfaz al principio; aparecerá al elegir nivel */
         }
 
+        /* Estilo brillante rosa para el reloj de tiempo */
         #tiempo {
             color: #ff0055;
             text-shadow: 0 0 10px #ff0055;
         }
 
+        /* Estilo brillante azul para el marcador de puntos */
         #puntos {
             color: #00ffcc;
             text-shadow: 0 0 10px #00ffcc;
         }
 
+        /* Estilo del lienzo digital del juego */
         canvas {
             display: block;
             background-color: #070a13;
         }
+
+        /* Contenedores base para los menús flotantes (Inicio y Fin) */
+        .pantalla-flotante {
+            position: absolute;
+            /* Flota sobre el lienzo del juego */
+            top: 50%;
+            /* Se coloca a la mitad vertical de la pantalla */
+            left: 50%;
+            /* Se coloca a la mitad horizontal de la pantalla */
+            transform: translate(-50%, -50%);
+            /* Centra el cuadro de forma exacta matemática */
+            z-index: 20;
+            /* Se sitúa por encima de absolutamente todo */
+            background-color: rgba(7, 10, 19, 0.95);
+            /* Fondo negro semitransparente elegante */
+            padding: 30px;
+            /* Espacio de colchón interno alrededor del menú */
+            border-radius: 15px;
+            /* Redondea las esquinas del cuadro */
+            border: 2px solid #9900ff;
+            /* Borde morado brillante neón */
+            box-shadow: 0 0 20px #9900ff;
+            /* Aura brillante morada alrededor del cuadro */
+            width: 80%;
+            /* Ocupa el 80% del ancho del celular */
+            max-width: 400px;
+            /* Limita el tamaño máximo en pantallas grandes */
+        }
+
+        /* Títulos principales de los menús */
+        .pantalla-flotante h1 {
+            color: #00ffcc;
+            /* Color turquesa neón */
+            text-shadow: 0 0 10px #00ffcc;
+            /* Efecto de luz brillante */
+            margin-bottom: 25px;
+            /* Espacio de separación con los botones */
+        }
+
+        /* Estilo base para todos los botones del juego */
+        .btn-juego {
+            display: block;
+            /* Hace que cada botón ocupe un renglón completo */
+            width: 100%;
+            /* El botón se estira a todo el ancho disponible */
+            padding: 15px;
+            /* Altura interna del botón para que sea fácil tocarlo con el dedo */
+            margin: 15px 0;
+            /* Espacio de separación vertical entre botones */
+            font-size: 18px;
+            /* Tamaño de letra mediano y claro */
+            font-weight: bold;
+            /* Letras gruesas */
+            color: #ffffff;
+            /* Texto de color blanco */
+            background: transparent;
+            /* Fondo transparente para ver el efecto neón */
+            border-radius: 10px;
+            /* Bordes redondeados del botón */
+            cursor: pointer;
+            /* Cambia el cursor a una mano al pasar por encima */
+            transition: 0.3s;
+            /* Suaviza el cambio de color al presionarlo */
+        }
+
+        /* Diseños específicos de color neón para cada dificultad */
+        .basico {
+            border: 2px solid #00ff66;
+            box-shadow: 0 0 10px #00ff66;
+        }
+
+        /* Verde para novatos */
+        .intermedio {
+            border: 2px solid #ffcc00;
+            box-shadow: 0 0 10px #ffcc00;
+        }
+
+        /* Amarillo para intermedio */
+        .avanzado {
+            border: 2px solid #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+        }
+
+        /* Rojo/Rosa para expertos */
+
+        /* Estilos de color neón para los botones del menú de fin de juego */
+        .btn-reiniciar {
+            border: 2px solid #00ffcc;
+            box-shadow: 0 0 10px #00ffcc;
+            color: #00ffcc;
+        }
+
+        /* Turquesa neón */
+        .btn-salir {
+            border: 2px solid #9900ff;
+            box-shadow: 0 0 10px #9900ff;
+            color: #9900ff;
+        }
+
+        /* Morado neón */
     </style>
 </head>
 
 <body>
 
-    <div class="interfaz">
+    <div class="pantalla-flotante" id="menuInicio">
+        <h1>NEON POP</h1>
+        <p>Selecciona tu nivel de dificultad:</p> <button class="btn-juego basico" onclick="comenzarJuego(2)">🟢 BÁSICO
+            (Lento)</button>
+        <button class="btn-juego intermedio" onclick="comenzarJuego(4)">🟡 INTERMEDIO (Medio)</button>
+        <button class="btn-juego avanzado" onclick="comenzarJuego(7)">🔴 AVANZADO (Rápido)</button>
+    </div>
+
+    <div class="pantalla-flotante" id="menuFin" style="display: none;">
+        <h1 style="color: #ff0055; text-shadow: 0 0 10px #ff0055;">FIN DEL JUEGO</h1>
+        <p>Tu Puntaje Final es: <span id="puntosFinales"
+                style="color: #00ffcc; font-size: 24px; font-weight: bold;">0</span></p> <button
+            class="btn-juego btn-reiniciar" onclick="regresarAlMenu()">🔄 Volver a Intentar</button>
+        <button class="btn-juego btn-salir" onclick="window.location.href='/'">🏠 Menú Principal</button>
+    </div>
+
+    <div class="interfaz" id="barraInterfaz">
         <div id="puntos">SCORE: <span id="texto-puntos">0</span></div>
         <div id="tiempo">TIEMPO: <span id="texto-tiempo">30</span>s</div>
     </div>
@@ -57,134 +196,181 @@
     <canvas id="lienzoJuego"></canvas>
 
     <script>
+        // Captura el lienzo de dibujo desde la pantalla de HTML
         const canvas = document.getElementById("lienzoJuego");
+        // Activa el contexto de dibujo en 2D para poder pintar círculos y líneas
         const ctx = canvas.getContext("2d");
 
+        // Ajusta el ancho del lienzo al tamaño exacto de la pantalla del celular del alumno
         canvas.width = window.innerWidth;
+        // Ajusta el alto del lienzo al tamaño exacto de la pantalla del celular del alumno
         canvas.height = window.innerHeight;
 
+        // Variable global para almacenar los puntos acumulados del jugador
         let puntos = 0;
-        let tiempoRestante = 30; // El juego dura 30 segundos
+        // Variable para la cuenta regresiva del reloj en segundos
+        let tiempoRestante = 30;
+        // Arreglo dinámico vacío donde guardaremos cada globo que aparezca en pantalla
         let listaGlobos = [];
-        let juegoActivo = true;
+        // Bandera lógica para controlar si el juego está corriendo o ya se detuvo
+        let juegoActivo = false;
+        // Variable para almacenar la velocidad elegida por el botón de nivel
+        let velocidadNivel = 2;
+        // Paleta de colores neón en formato hexadecimal para pintar los globos al azar
         const coloresNeon = ["#ff0055", "#00ffcc", "#9900ff", "#ffcc00", "#00ff66"];
 
+        // Molde matemático (Clase) para fabricar e inicializar cada globo de forma individual
         class Globo {
+            // Constructor que se ejecuta de forma automática al crear un globo nuevo
             constructor() {
+                // Genera un tamaño de radio al azar para el globo entre 25 y 35 píxeles
                 this.radio = Math.random() * 10 + 25;
+                // Coloca al globo en una posición horizontal (X) al azar sin salirse de la pantalla
                 this.x = Math.random() * (canvas.width - this.radio * 2) + this.radio;
+                // Coloca al globo oculto abajo de la pantalla listo para subir
                 this.y = canvas.height + this.radio;
-                this.velocidad = Math.random() * 2.5 + 2; // Un poco más rápidos para el reto
+                // Asigna la velocidad de subida usando la base del nivel elegido más una variación al azar
+                this.velocidad = Math.random() * 2 + velocidadNivel;
+                // Elige un color brillante al azar de nuestra lista de colores neón
                 this.color = coloresNeon[Math.floor(Math.random() * coloresNeon.length)];
             }
 
+            // Función interna para dibujar el cuerpo circular del globo en el lienzo
             dibujar() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.closePath();
+                ctx.beginPath(); // Inicia un nuevo trazo de dibujo
+                ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2); // Dibuja una circunferencia perfecta
+                ctx.fillStyle = this.color; // Elige el color del globo para rellenarlo
+                ctx.shadowBlur = 15; // Activa un difuminado para simular el brillo neón
+                ctx.shadowColor = this.color; // Elige el color del brillo igual al cuerpo del globo
+                ctx.fill(); // Rellena el círculo con el color establecido
+                ctx.closePath(); // Cierra el trazo del círculo
 
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y + this.radio);
-                ctx.lineTo(this.x, this.y + this.radio + 15);
-                ctx.strokeStyle = "#ffffff";
-                ctx.shadowBlur = 0;
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.closePath();
+                ctx.beginPath(); // Inicia un nuevo trazo para el hilo del globo
+                ctx.moveTo(this.x, this.y + this.radio); // Se posiciona exactamente en el fondo del globo
+                ctx.lineTo(this.x, this.y + this.radio + 15); // Traza una línea recta de 15 píxeles hacia abajo
+                ctx.strokeStyle = "#ffffff"; // Pone la línea del hilo en color blanco
+                ctx.shadowBlur = 0; // Desactiva el brillo para que el hilo sea una línea delgada normal
+                ctx.lineWidth = 2; // Define el grosor de la línea del hilo
+                ctx.stroke(); // Dibuja la línea físicamente en el lienzo
+                ctx.closePath(); // Cierra el trazo del hilo
             }
 
+            // Función interna que actualiza la posición vertical restando píxeles para que suba
             actualizar() {
-                this.y -= this.velocidad;
+                this.y -= this.velocidad; // Resta la velocidad a la coordenada Y (en pantallas, restar es subir)
             }
         }
 
+        // Función que se encarga de iniciar formalmente los motores del juego tras dar clic en el menú
+        function comenzarJuego(velocidadElegida) {
+            velocidadNivel = velocidadElegida; // Guarda la velocidad del nivel seleccionado en la variable global
+            juegoActivo = true; // Activa la bandera del juego para que empiece la acción
+            document.getElementById("menuInicio").style.display = "none"; // Desaparece el cuadro del menú de la pantalla
+            document.getElementById("menuFin").style.display = "none"; // Asegura que el menú de fin esté oculto
+            document.getElementById("barraInterfaz").style.display = "flex"; // Muestra los puntos y el tiempo arriba con diseño flexible
+
+            spawnGlobo(); // Lanza el primer globo a la pantalla
+            animarJuego(); // Arranca el bucle de animación fluida del juego
+            iniciarReloj(); // Enciende el cronómetro de la cuenta regresiva
+        }
+
+        // Función generadora cíclica que introduce un globo nuevo al arreglo de memoria
         function spawnGlobo() {
-            if (!juegoActivo) return;
-            listaGlobos.push(new Globo());
-            setTimeout(spawnGlobo, 600); // Salen globos más seguido
+            if (!juegoActivo) return; // Si el juego terminó, se detiene y ya no genera más globos
+            listaGlobos.push(new Globo()); // Fabrica un globo nuevo con nuestro molde y lo mete a la lista
+            setTimeout(spawnGlobo, 500); // Se vuelve a llamar a sí misma automáticamente cada 500 milisegundos (medio segundo)
         }
 
-        // Cuenta regresiva del reloj
-        const cronometro = setInterval(() => {
-            if (tiempoRestante > 0) {
-                tiempoRestante--;
-                document.getElementById("texto-tiempo").innerText = tiempoRestante;
-            } else {
-                juegoActivo = false;
-                clearInterval(cronometro);
-            }
-        }, 1000);
+        // Función encargada de controlar el cronómetro de 30 segundos
+        function iniciarReloj() {
+            const cronometro = setInterval(() => { // Declara un intervalo repetitivo que corre cada 1000 milisegundos (1 segundo)
+                if (tiempoRestante > 0 && juegoActivo) { // Si queda tiempo y el juego sigue activo
+                    tiempoRestante--; // Resta un segundo al contador
+                    document.getElementById("texto-tiempo").innerText = tiempoRestante; // Actualiza el número en la pantalla del celular
+                } else { // Si el tiempo llegó a cero
+                    juegoActivo = false; // Apaga la bandera del juego
+                    clearInterval(cronometro); // Destruye el intervalo del reloj para que deje de contar en el fondo
+                    mostrarPantallaFinal(); // NUEVO: Llama al menú flotante final con las opciones de salir o reintentar
+                }
+            }, 1000); // Especifica que el código de adentro se ejecute estrictamente cada segundo
+        }
 
+        // Bucle de animación infinito que redibuja la pantalla a máxima velocidad (60 cuadros por segundo)
         function animarJuego() {
-            ctx.fillStyle = "#070a13";
-            ctx.shadowBlur = 0;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (!juegoActivo) return; // NUEVO: Si el juego se apaga, detiene la animación para liberar la memoria del teléfono
 
+            ctx.fillStyle = "#070a13"; // Elige el color azul oscuro de fondo del lienzo
+            ctx.shadowBlur = 0; // Apaga los brillos para el fondo de pantalla
+            ctx.fillRect(0, 0, canvas.width, canvas.height); // Limpia todo el lienzo pintando un rectángulo gigante encima
+
+            // Ciclo que recorre la lista de globos de atrás hacia adelante para moverlos y pintarlos
             for (let i = listaGlobos.length - 1; i >= 0; i--) {
-                listaGlobos[i].actualizar();
-                listaGlobos[i].dibujar();
+                listaGlobos[i].actualizar(); // Le ordena al globo subir según su velocidad asignada
+                listaGlobos[i].dibujar(); // Le ordena al globo pintarse con su color y brillo neón
 
+                // Valida si el globo ya rebasó el límite superior de la pantalla por completo
                 if (listaGlobos[i].y + listaGlobos[i].radio < 0) {
-                    listaGlobos.splice(i, 1);
+                    listaGlobos.splice(i, 1); // Borra el globo viejo de la memoria para que el celular no se ponga lento
                 }
             }
 
-            // Si el tiempo llega a 0, mostramos la pantalla de Game Over
-            if (!juegoActivo) {
-                ctx.fillStyle = "rgba(7, 10, 19, 0.8)";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = "#ff0055";
-                ctx.font = "bold 30px Courier New";
-                ctx.textAlign = "center";
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = "#ff0055";
-                ctx.fillText("¡TIEMPO TERMINADO!", canvas.width / 2, canvas.height / 2 - 20);
-
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "20px Courier New";
-                ctx.shadowBlur = 0;
-                ctx.fillText("Puntaje Final: " + puntos, canvas.width / 2, canvas.height / 2 + 30);
-                ctx.font = "14px Courier New";
-                ctx.fillText("Escanea de nuevo para revancha", canvas.width / 2, canvas.height / 2 + 70);
-                return;
-            }
-
-            requestAnimationFrame(animarJuego);
+            requestAnimationFrame(animarJuego); // Ordena al navegador volver a llamar a esta función en el siguiente milisegundo útil
         }
 
-        // CONTROL MEJORADO: Ahora es mucho más sensible al hacer clic o tocar
-        function verificarImpacto(clickX, clickY) {
-            if (!juegoActivo) return;
+        // NUEVA FUNCIÓN: Detiene el juego, limpia la pantalla y activa el recuadro flotante final
+        function mostrarPantallaFinal() {
+            document.getElementById("barraInterfaz").style.display = "none"; // Oculta la barra de puntos superior
+            document.getElementById("puntosFinales").innerText = puntos; // Inyecta el puntaje acumulado dentro del recuadro final
+            document.getElementById("menuFin").style.display = "block"; // Hace visible el menú de reintentar o salir
 
+            ctx.fillStyle = "rgba(7, 10, 19, 0.85)"; // Define un fondo negro traslúcido para opacar el lienzo de juego
+            ctx.fillRect(0, 0, canvas.width, canvas.height); // Pinta este fondo para dar elegancia visual
+        }
+
+        // NUEVA FUNCIÓN: Resetea todas las variables matemáticas a cero y te regresa al selector de niveles
+        function regresarAlMenu() {
+            puntos = 0; // Borra los puntos del juego anterior y los regresa a cero
+            tiempoRestante = 30; // Restablece el reloj a sus 30 segundos completos
+            listaGlobos = []; // Vacía por completo la lista para borrar los globos que hayan quedado flotando
+            document.getElementById("texto-puntos").innerText = "0"; // Actualiza el texto de puntos visual a cero
+            document.getElementById("texto-tiempo").innerText = "30"; // Actualiza el texto del reloj visual a 30
+            document.getElementById("menuFin").style.display = "none"; // Oculta el menú de fin de juego
+            document.getElementById("menuInicio").style.display = "block"; // Vuelve a mostrar el selector de niveles neón
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Borra por completo cualquier residuo del lienzo de dibujo
+        }
+
+        // Función matemática para verificar si la coordenada donde el usuario tocó coincide con la posición de un globo
+        function verificarImpacto(clickX, clickY) {
+            if (!juegoActivo) return; // Si el juego no ha iniciado o ya terminó, ignora por completo los toques
+
+            // Ciclo que inspecciona cada globo activo en pantalla empezando por el último creado
             for (let i = listaGlobos.length - 1; i >= 0; i--) {
-                let globo = listaGlobos[i];
+                let globo = listaGlobos[i]; // Extrae el globo actual en una variable temporal
+                // Aplica la fórmula matemática del triángulo rectángulo (Hipotenusa) para medir la distancia exacta en píxeles
                 let distancia = Math.hypot(clickX - globo.x, clickY - globo.y);
 
-                // Aumentamos el margen de impacto (+15 píxeles) para que sea facilísimo reventarlos al tocar cerca
+                // Si la distancia medida es menor que el tamaño del globo (más un margen de tolerancia de 15 píxeles)
                 if (distancia < globo.radio + 15) {
-                    puntos++;
-                    document.getElementById("texto-puntos").innerText = puntos;
-                    listaGlobos.splice(i, 1);
-                    break;
+                    puntos++; // Incrementa el contador de puntuación del jugador en 1 punto
+                    document.getElementById("texto-puntos").innerText = puntos; // Actualiza el número de puntos en la pantalla
+                    listaGlobos.splice(i, 1); // Remueve el globo golpeado del arreglo eliminándolo del juego al instante
+                    break; // Corta el ciclo for para evitar reventar dos globos empalmados con un mismo toque
                 }
             }
         }
 
+        // Escucha en tiempo real si el alumno coloca el dedo sobre la pantalla táctil de su celular
         canvas.addEventListener("touchstart", function (e) {
+            // Envía las coordenadas exactas de píxeles del primer toque del dedo a la función de verificación
             verificarImpacto(e.touches[0].clientX, e.touches[0].clientY);
         });
 
+        // Escucha en tiempo real si el usuario hace un clic con el ratón (útil para hacer pruebas en computadora)
         canvas.addEventListener("mousedown", function (e) {
+            // Envía las coordenadas exactas de píxeles del clic a la función de verificación
             verificarImpacto(e.clientX, e.clientY);
         });
-
-        spawnGlobo();
-        animarJuego();
     </script>
 </body>
 
